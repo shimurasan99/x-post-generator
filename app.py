@@ -25,6 +25,7 @@ GENRES = [
     "投資知識",
     "EA・自動売買",
     "LINE誘導",
+    "話題ニュース",
 ]
 
 THEME_SUGGESTIONS = {
@@ -77,6 +78,13 @@ THEME_SUGGESTIONS = {
         "投資学習コミュニティの使い方",
         "売買判断を急がない情報収集",
     ],
+    "話題ニュース": [
+        "溝口勇児氏と三崎優太氏の話題から見るSNS時代の信用",
+        "著名人同士のトラブルが注目される理由",
+        "炎上ニュースと投資家心理の関係",
+        "SNSで話題化するニュースの見方",
+        "スキャンダル報道と情報リテラシー",
+    ],
 }
 
 NEWS_QUERIES = {
@@ -87,6 +95,7 @@ NEWS_QUERIES = {
     "投資知識": "投資 NISA 資産形成 リスク管理 金融教育",
     "EA・自動売買": "EA 自動売買 FX バックテスト ドローダウン",
     "LINE誘導": "投資 情報収集 LINE 資産形成 学習",
+    "話題ニュース": "経営者 インフルエンサー 炎上 トラブル 話題 SNS 青汁王子 溝口勇児 三崎優太",
 }
 
 PROHIBITED_PHRASES = [
@@ -113,6 +122,35 @@ ENDING_NOTES = [
     "売買を急ぐ前に、根拠、時間軸、撤退ラインをセットで見るだけで判断の質はかなり変わります。",
     "このテーマは、価格予想よりも市場参加者が何を警戒しているかを見る方が学びが多いです。",
 ]
+
+MARKET_HOOKS = [
+    "これはちょっと見逃せないですねw",
+    "ここ、投資家の温度感が出やすいところです。",
+    "表のニュースだけ見ると浅いかもです。",
+    "短期勢と長期勢で見方が分かれそうです。",
+    "SNSの熱量と実際の需給は分けて見たいですね。",
+]
+
+TOPICAL_HOOKS = [
+    "これはちょっと見逃せないですねw",
+    "SNSがざわつく理由、わりと分かります。",
+    "表のニュースだけ見ると浅いかもです。",
+    "ここ、意外と投資にもつながる話です。",
+    "エンタメに見えて、信用の話でもあります。",
+]
+
+POP_EMOJIS = ["👀", "🔥", "💡", "📈", "🧐", "⚠️", "💬", "😳"]
+
+LENGTH_SUPPLEMENTS = {
+    "話題ニュース": (
+        "{genre}の{theme}は、誰かを一方的に叩くより、発言の時系列、一次情報、SNSで広がった理由を分けて見るとかなり学びがあります。"
+        "信用が揺れる瞬間ほど、情報の扱い方に差が出ます。"
+    ),
+    "default": (
+        "{genre}の{theme}は、見出しで終わらせず市場の反応、出来高、金利や需給まで見ると解像度が上がります。"
+        "ここを分けて考えられるかで、ニュースの使い方に差が出ます。"
+    ),
+}
 
 GENRE_CONTEXTS = {
     "ゴールド": [
@@ -150,6 +188,11 @@ GENRE_CONTEXTS = {
         "情報収集の入口として使えても、売買判断は自分で確認したい分野",
         "相場メモや学習用の情報として、落ち着いて活用したいテーマ",
     ],
+    "話題ニュース": [
+        "SNSの拡散力、発信者の信用、受け手の感情が一気に動きやすいテーマ",
+        "真偽の確認より先に感情が広がりやすく、情報の扱い方が問われる話題",
+        "人物の好き嫌いだけでなく、信用、資金、人間関係の見え方まで影響しやすい分野",
+    ],
 }
 
 TEMPLATES = [
@@ -158,6 +201,22 @@ TEMPLATES = [
     "{genre}の「{theme}」は、単なるニュースではなく相場心理を読む材料になります。強い材料に見えても、すでに価格へ織り込まれている可能性もあります。{note}",
     "「{theme}」で注目したいのは、価格の方向感よりも市場の警戒ポイントです。{genre}は{context}なので、期待シナリオと崩れる条件をセットで持つと見方がかなり変わります。{note}",
     "投資で差が出るのは、ニュースを早く知ることより解釈の精度です。{genre}の「{theme}」も、見出しだけではなく金利、需給、リスク許容度の変化まで見たいところ。{note}",
+]
+
+POP_TEMPLATES = [
+    "{emoji}{genre}の「{theme}」、これ普通に見逃せないですw {hook} 値動きだけ追うより、どの材料に市場が反応しているかを見るとかなり面白い。{context}なので、短期のノイズと本命材料は分けたいところ。{note}",
+    "{emoji}「{theme}」で相場がざわついていますね。ここで大事なのは、上がる下がるの決め打ちではなく、参加者が何を警戒しているか。{hook} {context}だからこそ、見出しだけで判断しない方が良さそうです。",
+    "{emoji}{genre}界隈、また材料が出てきましたねw テーマは「{theme}」。こういう時ほどSNSの熱量に飲まれず、出来高、金利、需給、ニュースの時系列をセットで見ると差が出ます。{note}",
+    "{emoji}正直、「{theme}」は投稿ネタとしても強いですw ただ、煽りだけで終わると薄いので、なぜ今注目されているのかまで見るのがおすすめ。{context}という前提を置くと、相場の見え方が変わります。",
+    "{emoji}「{theme}」を見て、すぐ売買判断に飛ぶのは少し早いかもです。まずは市場が何を好感し、何を嫌がっているかを整理。{hook} {genre}は材料の受け止め方で空気が一気に変わるので、ここは要チェックです。",
+]
+
+TOPICAL_TEMPLATES = [
+    "{emoji}「{theme}」これ、ただの話題ニュースとして流すのはもったいないですw {hook} {context}なので、誰が正しいかより「なぜここまで拡散したのか」を見るとかなり面白い。{note}",
+    "{emoji}{genre}で今いちばん見たいのは「{theme}」の裏側です。表では揉め事っぽく見えても、実際は信用、影響力、お金の流れが見えるケースもあります。{hook} {note}",
+    "{emoji}この「{theme}」、SNS向きの燃え方をしていますねw ただ、感情だけで乗ると情報の解像度が落ちます。{context}だからこそ、発言の時系列と一次情報はセットで見たいところ。{note}",
+    "{emoji}投資垢でも「{theme}」はスルーしにくい話題です。理由はシンプルで、相場もビジネスも最後は信用で動くから。誰かを叩くより、何が信用を揺らしたのかを見る方が学びが多いです。{hook}",
+    "{emoji}正直、「{theme}」みたいな話題は伸びやすいですw でも煽りだけだと薄いので、信用、資金、人間関係、SNS拡散の4点で見るのがおすすめ。投資ニュースを見る目にもつながります。{note}",
 ]
 
 FONT_CANDIDATES = [
@@ -213,10 +272,7 @@ def fit_to_x_length(text: str, theme: str, genre: str) -> str:
         text = text[:276].rstrip("、。 ") + "。"
 
     while len(text) < 140:
-        addition = (
-            f"{genre}の{theme}は、見出しで終わらせず市場の反応、出来高、金利や需給まで見ると解像度が上がります。"
-            "ここを分けて考えられるかで、ニュースの使い方に差が出ます。"
-        )
+        addition = LENGTH_SUPPLEMENTS.get(genre, LENGTH_SUPPLEMENTS["default"]).format(genre=genre, theme=theme)
         text = sanitize_text(text + " " + addition)
         if len(text) > 280:
             text = text[:276].rstrip("、。 ") + "。"
@@ -260,13 +316,24 @@ def format_post_with_line_breaks(text: str) -> str:
     return text[:276].rstrip("、。 \n") + "。"
 
 
-def generate_posts(theme: str, genre: str) -> list[str]:
+def generate_posts(theme: str, genre: str, tone: str = "ポップ強め") -> list[str]:
     theme = clean_theme_title(theme)
     contexts = GENRE_CONTEXTS[genre][:]
     notes = ENDING_NOTES[:]
-    templates = TEMPLATES[:]
+    emojis = POP_EMOJIS[:]
+    if tone == "落ち着きめ":
+        templates = TEMPLATES[:]
+        hooks = MARKET_HOOKS[:]
+    elif genre == "話題ニュース":
+        templates = TOPICAL_TEMPLATES[:]
+        hooks = TOPICAL_HOOKS[:]
+    else:
+        templates = POP_TEMPLATES[:]
+        hooks = MARKET_HOOKS[:]
     random.shuffle(contexts)
     random.shuffle(notes)
+    random.shuffle(hooks)
+    random.shuffle(emojis)
     random.shuffle(templates)
 
     posts = []
@@ -276,6 +343,8 @@ def generate_posts(theme: str, genre: str) -> list[str]:
             theme=theme,
             context=contexts[index % len(contexts)],
             note=notes[index % len(notes)],
+            hook=hooks[index % len(hooks)],
+            emoji=emojis[index % len(emojis)],
         )
         fitted_post = fit_to_x_length(post, theme, genre)
         posts.append(format_post_with_line_breaks(fitted_post))
@@ -660,7 +729,7 @@ def clear_generated_results() -> None:
 st.set_page_config(page_title="投資系X投稿文生成ツール", page_icon="✍️", layout="centered")
 
 st.title("投資系X投稿文生成ツール")
-st.caption("X APIや自動投稿は使わず、投稿文を作成してCSV保存するだけのツールです。")
+st.caption("X APIや自動投稿は使わず、投稿文と4コマ漫画用プロンプトを作成するツールです。")
 
 if "posts" not in st.session_state:
     st.session_state.posts = []
@@ -733,8 +802,16 @@ with st.sidebar:
             on_change=clear_generated_results,
         )
 
+    tone = st.radio(
+        "投稿トーン",
+        ["ポップ強め", "落ち着きめ"],
+        horizontal=True,
+        key="post_tone",
+        on_change=clear_generated_results,
+    )
+
     st.caption(f"現在の選択: {genre} / {theme_source}")
-    st.info("生成文は投資助言ではありません。最新ニュースは投稿前に必ず元記事や一次情報を確認してください。")
+    st.info("生成文は投資助言ではありません。最新ニュースや実在人物の話題は投稿前に必ず元記事や一次情報を確認してください。")
 
 prompt_mode = st.radio(
     "4コマ漫画用プロンプト",
@@ -749,7 +826,7 @@ if generate_button:
     if not theme.strip():
         st.error("投稿テーマを入力してください。")
     else:
-        st.session_state.posts = generate_posts(theme.strip(), genre)
+        st.session_state.posts = generate_posts(theme.strip(), genre, tone)
         st.session_state.csv_path = save_to_csv(theme.strip(), genre, st.session_state.posts)
         if prompt_mode == "作成する":
             st.session_state.comic_prompt = build_comic_prompt(theme.strip(), genre, st.session_state.posts)
