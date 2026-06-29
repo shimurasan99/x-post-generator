@@ -1,12 +1,13 @@
 from __future__ import annotations
 
 import csv
+from email.utils import parsedate_to_datetime
 import html
 import io
 import json
 import random
 import re
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from urllib.parse import quote_plus
 from urllib.request import Request, urlopen
@@ -97,6 +98,8 @@ NEWS_QUERIES = {
     "LINE誘導": "投資 情報収集 LINE 資産形成 学習",
     "話題ニュース": "経営者 インフルエンサー 炎上 トラブル 話題 SNS 青汁王子 溝口勇児 三崎優太",
 }
+
+NEWS_LOOKBACK_DAYS = 2
 
 PROHIBITED_PHRASES = [
     "絶対稼げる",
@@ -238,13 +241,29 @@ def fetch_latest_news(genre: str, max_items: int = 8) -> list[dict[str, str]]:
 
     root = ET.fromstring(xml_text)
     items = []
-    for item in root.findall("./channel/item")[:max_items]:
+    cutoff = datetime.now(timezone.utc) - timedelta(days=NEWS_LOOKBACK_DAYS)
+    for item in root.findall("./channel/item"):
         title = html.unescape(item.findtext("title", default="")).strip()
         link = item.findtext("link", default="").strip()
         published = item.findtext("pubDate", default="").strip()
-        if title:
-            items.append({"title": title, "link": link, "published": published})
+        if not title or not is_recent_news(published, cutoff):
+            continue
+        items.append({"title": title, "link": link, "published": published})
+        if len(items) >= max_items:
+            break
     return items
+
+
+def is_recent_news(published: str, cutoff: datetime) -> bool:
+    if not published:
+        return False
+    try:
+        published_at = parsedate_to_datetime(published)
+    except (TypeError, ValueError):
+        return False
+    if published_at.tzinfo is None:
+        published_at = published_at.replace(tzinfo=timezone.utc)
+    return published_at.astimezone(timezone.utc) >= cutoff
 
 
 def sanitize_text(text: str) -> str:
@@ -781,6 +800,7 @@ with st.sidebar:
                 if selected_news["link"]:
                     st.link_button("ニュース元を開く", selected_news["link"])
         else:
+            st.warning("直近2日以内のニュースが見つからなかったため、代替テーマを表示しています。")
             theme = st.selectbox(
                 "代替テーマ",
                 THEME_SUGGESTIONS[genre],
@@ -811,7 +831,7 @@ with st.sidebar:
     )
 
     st.caption(f"現在の選択: {genre} / {theme_source}")
-    st.info("生成文は投資助言ではありません。最新ニュースや実在人物の話題は投稿前に必ず元記事や一次情報を確認してください。")
+    st.info("最新ニュースは直近2日以内の記事に絞っています。生成文は投資助言ではありません。実在人物の話題は投稿前に必ず元記事や一次情報を確認してください。")
 
 prompt_mode = st.radio(
     "4コマ漫画用プロンプト",
